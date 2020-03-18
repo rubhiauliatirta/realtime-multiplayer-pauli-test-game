@@ -1,21 +1,21 @@
 const { Room } = require("../models")
-const kue = require("kue")
+const kue = require("kue") //package untuk membuat antrian job
 const queue = kue.createQueue({
   redis: process.env.REDIS_URL
 })
 
-
+//proses antrian job
 queue.process('join-to-room', function(job, done){
  
-  const {payload, callback} = job.data
-  console.log(payload, "ini payload")
-  //console.log(callback, "ini cal")
+  const { payload } = job.data
+
   Room.findOne({
     where : {
       name :payload.roomName
     }
-  }).then(result => {
-    let index = Object.keys(result.players).length
+  })
+  .then(result => {
+    let index = Object.keys(result.players).length //hitung jumlah pemain dalam room untuk indexing player
     let playerKey = `${index+1}-${payload.playerName}`
     result.players[playerKey] = 0
     result.changed("players", true)
@@ -23,7 +23,7 @@ queue.process('join-to-room', function(job, done){
     return Promise.all([result.save(), playerKey])
   })
   .then(([result, playerKey]) => {
-    done(null, {...result.dataValues, playerKey})
+    done(null, {...result.dataValues, playerKey}) //jika berhasil, bawa data room yang telah terupdate dengan pemain baru agar dapat diambil oleh listener job nya
   })
   .catch(err => {  
     done(err)

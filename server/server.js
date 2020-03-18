@@ -1,10 +1,10 @@
-//const http = require("./http")
-//const io = require("socket.io")(http)
-const socketIO = require("socket.io")
+const http = require("./http")
+const io = require("socket.io")(http)
+//const socketIO = require("socket.io")
 const RoomController = require("./controllers/room")
-const PORT = process.env.PORT || 3000
+//const PORT = process.env.PORT || 3000
 
-const io = new socketIO()
+//const io = new socketIO()
 
 io.on("connection", function(socket){
 
@@ -31,7 +31,7 @@ io.on("connection", function(socket){
       } else  {
         socket.join(payload.roomName) //daftarin player ke room yang dia mau join
         io.to(payload.roomName).emit('player-joined', result.players) // kabarin ke anggota room lain kalo ada yang join
-        socket.emit('get-in-to-room', result)
+        socket.emit('get-in-to-room', result) //nyuruh yang join untuk masuk ke room
         io.emit('update-client-room') //trigger semua client agar update rooms nya
       }
        
@@ -41,7 +41,7 @@ io.on("connection", function(socket){
   socket.on('get-rooms', function(){
     RoomController.findAll()
     .then(rooms => {
-      socket.emit("get-rooms", rooms)
+      socket.emit("get-rooms", rooms) //trigger client untuk menampilkan rooms
     })
     .catch(err => {
       socket.emit('show-error',"Failed to get room data")
@@ -63,19 +63,19 @@ io.on("connection", function(socket){
   // })
 
   socket.on('change-isplaying', function(payload){
-    io.to(payload.roomName).emit('change-isplaying', payload.isPlaying)
+    io.to(payload.roomName).emit('change-isplaying', payload.isPlaying) //trigger room untuk memulai/menghentikan permainan
   })
   socket.on('update-score', function(payload){
-    socket.broadcast.to(payload.roomName).emit('update-score', payload)
+    socket.broadcast.to(payload.roomName).emit('update-score', payload) //trigger client untuk mengupdate score
   })
   socket.on('end-game', function(roomName){
-    io.to(roomName).emit('end-game')
+    io.to(roomName).emit('end-game') //trigger room untuk menghentikan permainan
   })
 
 })
 
-io.origins((origin, callback) => {
-  callback(null, true);
-})
+// io.origins((origin, callback) => {
+//   callback(null, true);
+// })
 
-io.listen(PORT)
+// io.listen(PORT)

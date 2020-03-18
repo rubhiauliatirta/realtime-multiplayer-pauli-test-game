@@ -66,11 +66,13 @@
     class="mt-5"
       >Waiting for game master to start game...</h2>
       <h3 class="mt-4">How to play</h3>
-      <h4>* Game baru bisa dimulai oleh game master ketika di dalam room sudah ada 4 orang player</h4>
-      <h4>* Nanti akan muncul 2 angka yang harus ditambahkan, jawaban yang benar adalah angka satuan dari hasil penambahan. </h4>
-      <h4>* contoh : 2 + 4 = 6</h4>
-      <h4>* contoh : 9 + 4 = 13 => jawaban adalah 3</h4>
-      <h4>* contoh : 5 + 7 = 12 => jawaban adalah 2</h4>
+      <h5>* Game baru bisa dimulai oleh game master ketika di dalam room sudah ada 4 orang player</h5>
+      <h5>* Nanti akan muncul 2 angka yang harus ditambahkan, jawaban yang benar adalah angka satuan dari hasil penambahan. </h5>
+      <h5>* contoh : 2 + 4 = 6</h5>
+      <h5>* contoh : 9 + 4 = 13 => jawaban adalah 3</h5>
+      <h5>* contoh : 5 + 7 = 12 => jawaban adalah 2</h5>
+      <h5>* pencet tombol angka pada keyboard laptop kalian untuk menjawab pertanyaan</h5>
+      <h5>* pemain yang pertama kali mencapai score 20 akan memenangkan pertandingan</h5>
   </b-container>
 </template>
 

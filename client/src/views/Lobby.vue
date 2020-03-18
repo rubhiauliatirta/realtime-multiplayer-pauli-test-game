@@ -47,7 +47,7 @@ export default {
     return {
       roomName: "",
       roomList: [],
-      audio : null
+      audio : null,
     };
   },
   computed : {
@@ -92,6 +92,14 @@ export default {
       this.socket.on('room-created', (room) => {
         this.roomList.push(room)
         
+      })
+
+      this.socket.on('show-error', (message) => {
+        this.$swal({
+          icon: 'error',
+          title: 'Oops...',
+          text: message,
+        })
       })
 
       this.socket.on('get-in-to-room', (room) => {
