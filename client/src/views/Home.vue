@@ -1,6 +1,6 @@
 <template>
   <div class="home" >
-    <div >
+    <b-form @submit.prevent="startGame">
       <b-form-input
         class="mb-5"
         id="input-small"
@@ -10,12 +10,13 @@
         autocomplete="off"
       ></b-form-input>
       <b-button
+        type="submit"
         :disabled="playerName === ''"
         class="lets-play animated infinite bounce delay-2s"
         @click.prevent="startGame"
         variant="outline-danger"
       >Let's Play</b-button>
-    </div>
+    </b-form>
   </div>
 </template>
 
@@ -45,7 +46,9 @@ export default {
     startGame() {
        this.setMyName(this.playerName)
        if(this.socket === null){
-         let socket = io("https://murmuring-wildwood-15232.herokuapp.com/")
+         let socket = io(process.env.VUE_APP_SERVER)
+         //let socket = io("https://murmuring-wildwood-15232.herokuapp.com/")
+         //let socket = io("https://guarded-harbor-22113.herokuapp.com/")
          //let socket = io("http://localhost:3000")
          this.setSocket(socket)
        }

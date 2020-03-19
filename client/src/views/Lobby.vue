@@ -4,16 +4,17 @@
       <h1 style="color: #df0054; font-weight:bold">Hi, {{myName}}</h1>
       <b-row class="my-1 justify-content-center">
         <input
+          style="width: 300px;"
           id="input-small"
-          size="sm"
-          placeholder="Room Name"
+          size="lg"
+          placeholder="Room Name (minimal 4 character)"
           v-model="roomName"
           type="text"
           maxlength="12"
           minlength="4"
           autocomplete="off"
         >
-        <b-button type="submit" @click.prevent="createRoom">create room</b-button>
+        <b-button type="submit" @click.prevent="createRoom" :disabled="roomName.length < 4">create room</b-button>
       </b-row>
     </b-form>
     <div class="container mt-4 w-100" style="display: flex; flex-wrap: wrap;">
@@ -59,8 +60,10 @@ export default {
       this.audio.addEventListener('ended', this._handleAudio, false);
       this.audio.play();
     if(this.socket === null){
-      //let socket = io("http://localhost:3000")
-      let socket = io("https://murmuring-wildwood-15232.herokuapp.com/")
+      
+      let socket = io(process.env.VUE_APP_SERVER)
+      //let socket = io("https://murmuring-wildwood-15232.herokuapp.com/")
+      //let socket = io("https://guarded-harbor-22113.herokuapp.com/")
       this.$store.commit('setSocket',socket)
     }
     this.$store.commit('resetState')
@@ -70,8 +73,8 @@ export default {
   mounted() {},
   methods: {
     _handleAudio(){
-      this.currentTime = 0;
-      this.play();
+      this.audio.currentTime = 0;
+      this.audio.play();
     },
     listRoom() {
       this.socket.emit('get-rooms')
@@ -85,7 +88,6 @@ export default {
     },
     listenOnSocketEvent(){
       this.socket.on('get-rooms', (rooms) => {
-        console.log(rooms)
         this.roomList = rooms
       })
 
@@ -95,15 +97,10 @@ export default {
       })
 
       this.socket.on('show-error', (message) => {
-        this.$swal({
-          icon: 'error',
-          title: 'Oops...',
-          text: message,
-        })
+         this.$myswal.showError(message)
       })
 
       this.socket.on('get-in-to-room', (room) => {
-        console.log(room.playerKey)
         room.isCreator && this.$store.commit("setIsCreator", true)
         this.$store.commit("setMyKey", room.playerKey)
         this.$store.commit("setRoom", room.name) 

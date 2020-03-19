@@ -30,10 +30,10 @@ export default new Vuex.Store({
       state.isCreator = payload
     },
     setMyKey(state,payload){
-      state.myKey=payload
+      state.myKey = payload
     },
     setMyName(state,payload){
-      state.myName=payload
+      state.myName = payload
     },
     setMyScore(state,payload){
       state.myScore = payload

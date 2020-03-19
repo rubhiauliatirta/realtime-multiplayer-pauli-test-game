@@ -5,10 +5,10 @@
       <b-col>+</b-col>
       <b-col>{{secondNumber}}</b-col>
     </b-row>
-    <div v-if="isGameEnded">
+    <!-- <div v-if="isGameEnded">
       <img v-if="isWinning" src="https://thumbs.gfycat.com/VapidRecklessGalapagosmockingbird-size_restricted.gif" alt="">
       <h1 v-if="isWinning == false">You Lose!!!</h1>
-    </div>
+    </div> -->
     <video
       @ended="videoEnded"
       src="https://rubhi-file.s3-ap-southeast-1.amazonaws.com/ghost.mp4"
@@ -33,8 +33,19 @@
           style="width: 10rem; min-width:10rem; margin: 10px"
           :key="myKey"
         >
-          <!-- <b-button variant="danger" v-if="!isGameEnded && !isPlaying">Leave</b-button> -->
+    
           <h1>{{myScore}}</h1>
+          <b-nav>
+            <b-nav-item  
+              class="mx-auto"
+              variant="danger"
+              :disabled="isCreator"
+              :link-classes="isCreator ? {'text-secondary':true} : {'text-danger':true}"
+              @click.prevent="$router.push('/lobby')" 
+              v-if="!isGameEnded && !isPlaying"
+              >Leave</b-nav-item>
+          </b-nav>
+     
         </b-card>
 
         <b-card
@@ -56,23 +67,31 @@
       </b-row>
     </div>
     <b-button v-if="!isGameEnded && isCreator && !isPlaying" 
-    :disabled="Object.keys(otherPlayers).length < 3"
-    variant="success"
-    class="mt-5"
-    @click="startGame">START GAME</b-button>
+      :disabled="Object.keys(otherPlayers).length < 3"
+      variant="success"
+      class="mt-5"
+      @click="startGame">START GAME</b-button>
+
+    <b-button v-if="isGameEnded" 
+      variant="primary"
+      class="mt-5"
+      @click="leaveRoom">Back to Lobby</b-button>
 
     <h2 v-if="!isGameEnded && !isCreator && !isPlaying" 
-    variant="success"
-    class="mt-5"
+      variant="success"
+      class="mt-5"
       >Waiting for game master to start game...</h2>
-      <h3 class="mt-4">How to play</h3>
-      <h5>* Game baru bisa dimulai oleh game master ketika di dalam room sudah ada 4 orang player</h5>
-      <h5>* Nanti akan muncul 2 angka yang harus ditambahkan, jawaban yang benar adalah angka satuan dari hasil penambahan. </h5>
-      <h5>* contoh : 2 + 4 = 6</h5>
-      <h5>* contoh : 9 + 4 = 13 => jawaban adalah 3</h5>
-      <h5>* contoh : 5 + 7 = 12 => jawaban adalah 2</h5>
-      <h5>* pencet tombol angka pada keyboard laptop kalian untuk menjawab pertanyaan</h5>
-      <h5>* pemain yang pertama kali mencapai score 20 akan memenangkan pertandingan</h5>
+    <h3 class="mt-4">How to play</h3>
+    <ul class="text-left border px-5 py-3">
+      <li>Game baru bisa dimulai oleh game master ketika di dalam room sudah ada 4 orang player</li>
+      <li>Nanti akan muncul 2 angka yang harus ditambahkan, jawaban yang benar adalah angka satuan dari hasil penambahan. </li>
+      <li>contoh : 2 + 4 = 6</li>
+      <li>contoh : 9 + 4 = 13 => jawaban adalah 3</li>
+      <li>contoh : 5 + 7 = 12 => jawaban adalah 2</li>
+      <li>pencet tombol angka pada keyboard laptop kalian untuk menjawab pertanyaan</li>
+      <li>JANGAN SAMPAI SALAH. POKOKNYA JANGAN :)</li>
+      <li>pemain yang pertama kali mencapai score 20 akan memenangkan pertandingan</li>
+    </ul>
   </b-container>
 </template>
 
@@ -89,6 +108,27 @@ export default {
     }else {
       next("/")
     }
+  },
+  beforeRouteLeave (to, from, next) {
+   if(this.isPlaying){
+      this.$myswal.showError("Cannot leave while playing")
+      next(false)
+   } else if (this.isCreator && !this.isGameEnded){
+      this.$myswal.showError("Game master cannot leave this room")
+      next(false)
+   } else { 
+     this.$myswal.showConfirmation("Do you want to leave this room?", (result) => {
+       if(result){
+         this.socket.emit("leave-room", {
+            roomName : this.room,
+            playerKey : this.myKey
+          })
+          next()
+       }else {
+         next(false)
+       }
+     })
+   }
   },
   name : "playBoard",
   data() {
@@ -121,6 +161,9 @@ export default {
       }
       this.socket.emit('change-isplaying', payload)
     },
+    leaveRoom(){
+      this.$router.push("/lobby")
+    },
     videoEnded() {
       this.ghost = false;
     },
@@ -139,12 +182,23 @@ export default {
       this.socket.on('end-game', () => {
         this.isPlaying = false
         this.isGameEnded = true
+        if(this.isWinning){
+          this.$myswal.showWin()
+        } else {
+          this.$myswal.showMessage("Sorry, you lost :(")
+        }
       })
       this.socket.on('update-score', (payload)=>{
         this.$store.commit('updateOtherScore', payload)
       })
       this.socket.on('player-joined', (players)=>{
         this.$store.commit('setOtherPlayers', players)
+      })
+      this.socket.on('player-left', (players)=>{
+        this.$store.commit('setOtherPlayers', players)
+      })
+      this.socket.on('show-error', (message) => {
+        this.$myswal.showError(message)
       })
     },
     handleKey(e){
@@ -191,6 +245,8 @@ export default {
     this.socket.off('end-game')
     this.socket.off('update-score')
     this.socket.off('player-joined')
+    this.socket.off('show-error')
+    this.socket.off('player-left')
     window.removeEventListener('keydown',this.handleKey)
   }
   
@@ -246,5 +302,8 @@ b-card-text {
     transform: translateX(-50%) translateY(-50%);
 
     background-size: cover;
+}
+li {
+  font-size: 20px;
 }
 </style>
