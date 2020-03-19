@@ -17,8 +17,7 @@ io.on("connection", function(socket){
       } else {
         io.emit('room-created', createdRoom) //send room to all client
         socket.join(createdRoom.name) //daftarin creator room ke room yang dia bikin
-      
-        socket.emit('get-in-to-room', {...createdRoom, playerKey: `1-${roomData.creator}`, isCreator : true})
+        socket.emit('get-in-to-room', {...createdRoom, playerKey: `1-${roomData.creator}`, isCreator : true}) //trigger creator untuk masuuk ker roomnya
       }
       
     })
@@ -39,28 +38,24 @@ io.on("connection", function(socket){
   })
 
   socket.on('get-rooms', function(){
-    RoomController.findAll()
-    .then(rooms => {
-      socket.emit("get-rooms", rooms) //trigger client untuk menampilkan rooms
-    })
-    .catch(err => {
-      socket.emit('show-error',"Failed to get room data")
+    RoomController.findAll(function(err, results){
+      if(err){
+        socket.emit('show-error', "Failed to get room data")
+      } else {
+        socket.emit("get-rooms", results) //trigger client untuk menampilkan rooms
+      }
     })
   })
 
   // ====== BAGIAN PLAY ROOM ========
 
-  // socket.on('leave-room', function(payload){
-  //   socket.leave(payload.roomName)
-  //   io.to(payload.roomName).emit('player-leave', payload.playerName)
-  //   RoomController.leave(payload)
-  //   .then(result => {
-  //     io.emit('update-client-room')
-  //   })
-  //   .catch(err => {
-  //     console.log(err)
-  //   })
-  // })
+  socket.on('leave-room', function(payload){
+    socket.leave(payload.roomName)
+    RoomController.leave(payload, function(err, result){
+      io.to(payload.roomName).emit('player-left', result.players) // kabarin ke anggota room lain kalo ada yang leave
+      io.emit('update-client-room')
+    })
+  })
 
   socket.on('change-isplaying', function(payload){
     io.to(payload.roomName).emit('change-isplaying', payload.isPlaying) //trigger room untuk memulai/menghentikan permainan
@@ -69,6 +64,11 @@ io.on("connection", function(socket){
     socket.broadcast.to(payload.roomName).emit('update-score', payload) //trigger client untuk mengupdate score
   })
   socket.on('end-game', function(roomName){
+    RoomController.delete(roomName, function(err){
+      if(!err){
+        io.emit('update-client-room') //trigger semua client agar update rooms nya
+      }
+    })
     io.to(roomName).emit('end-game') //trigger room untuk menghentikan permainan
   })
 

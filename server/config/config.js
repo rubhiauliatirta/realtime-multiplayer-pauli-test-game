@@ -1,7 +1,7 @@
 module.exports = {
   "development": {
-    "username": "hacktiv8",
-    "password": null,
+    "username": "postgres",
+    "password": "postgres",
     "database": "undercover_dev",
     "host": "127.0.0.1",
     "dialect": "postgres"

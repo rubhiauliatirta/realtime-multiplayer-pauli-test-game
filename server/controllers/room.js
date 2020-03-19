@@ -1,10 +1,10 @@
 const { Room } = require("../models")
-const kue = require("kue") //package untuk membuat antrian job
+const kue = require("kue") //package untuk membuat & memproses antrian job di background
 const queue = kue.createQueue({
   redis: process.env.REDIS_URL
 })
 
-//proses antrian job
+//proses antrian job yang tersimpan di redis kita
 queue.process('join-to-room', function(job, done){
  
   const { payload } = job.data
@@ -42,7 +42,7 @@ class RoomController {
 
     Room.create(newRoom)
     .then(createdRoom => {   
-      callback(null, createdRoom.dataValues)
+      callback(null, createdRoom.dataValues) //bawa infomasi room yang baru saja dibuat
     })
     .catch(err => {
       console.log(err)
@@ -57,37 +57,67 @@ class RoomController {
     var job = queue.create('join-to-room', {
         payload, 
         callback
-    }).save()
+    }).save() //membuat job untuk join ke room
 
     job.on('complete', function(result){
       console.log('Job completed with data ', result);
       callback(null, result)
-    })
-    
+    }) // listen event oncomplete nya job
+    .on('failed', function(errorMessage){
+      callback("failed")
+    })// listen jika join gagal
   }
 
-  static findAll(){
-    return Room.findAll({
+  static findAll(callback){
+    Room.findAll({
       order: [
         ['id', 'ASC'],
       ],
     })
+    .then(results => {
+      callback(null, results)
+    })
+    .catch(err => {
+      callback(err)
+    })
+    
   }
 
-  // static leave(payload){
-  //   Room.findOne({
-  //     where : {
-  //       name : payload.roomName
-  //     }
-  //   })
-  //   .then(result => {
-  //     if(result){
-  //       delete result.players[payload.playerKey];
-  //       result.changed("players", true)
-  //       return result.save()
-  //     } 
-  //   })
-  // }
+  static delete(roomName, callback){
+    Room.destroy({
+      where : {
+        name : roomName
+      }
+    })
+    .then(result => {
+      console.log("Success delete room")
+      callback(null)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
+
+  static leave(payload, callback){
+    Room.findOne({
+      where : {
+        name : payload.roomName
+      }
+    })
+    .then(result => {
+      if(result){
+        delete result.players[payload.playerKey];
+        result.changed("players", true)
+        return result.save()
+      } 
+    })
+    .then(result => {
+      callback(null, result.dataValues)
+    })
+    .catch(err => {
+      callback(err)
+    })
+  }
 }
 
 module.exports = RoomController
