@@ -8,6 +8,7 @@
         placeholder="Enter your name to join the game"
         v-model="playerName"
         autocomplete="off"
+        maxlength="15"
       ></b-form-input>
       <b-button
         type="submit"

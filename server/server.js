@@ -1,10 +1,6 @@
 const http = require("./http")
 const io = require("socket.io")(http)
-//const socketIO = require("socket.io")
 const RoomController = require("./controllers/room")
-//const PORT = process.env.PORT || 3000
-
-//const io = new socketIO()
 
 io.on("connection", function(socket){
 
@@ -73,9 +69,3 @@ io.on("connection", function(socket){
   })
 
 })
-
-// io.origins((origin, callback) => {
-//   callback(null, true);
-// })
-
-// io.listen(PORT)
