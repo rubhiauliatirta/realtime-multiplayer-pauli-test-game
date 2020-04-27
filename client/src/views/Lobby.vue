@@ -18,6 +18,10 @@
       </b-row>
     </b-form>
     <div class="container mt-4 w-100" style="display: flex; flex-wrap: wrap;">
+      <div v-if="loading" class="w-100 text-center">
+        <b-spinner variant="danger" label="Spinning" style="width: 4rem; height: 4rem;"></b-spinner>
+        <h1 style="color: #df0054;">Getting rooms...</h1>
+      </div>
       <Room
         v-for="(room) in roomList" :key="room.id"
         :room="room"/>
@@ -49,6 +53,7 @@ export default {
       roomName: "",
       roomList: [],
       audio : null,
+      loading : false
     };
   },
   computed : {
@@ -60,10 +65,7 @@ export default {
       this.audio.addEventListener('ended', this._handleAudio, false);
       this.audio.play();
     if(this.socket === null){
-      
       let socket = io(process.env.VUE_APP_SERVER)
-      //let socket = io("https://murmuring-wildwood-15232.herokuapp.com/")
-      //let socket = io("https://guarded-harbor-22113.herokuapp.com/")
       this.$store.commit('setSocket',socket)
     }
     this.$store.commit('resetState')
@@ -78,6 +80,7 @@ export default {
     },
     listRoom() {
       this.socket.emit('get-rooms')
+      this.loading = true
     },
     createRoom() {
       let payload = {
@@ -89,6 +92,7 @@ export default {
     listenOnSocketEvent(){
       this.socket.on('get-rooms', (rooms) => {
         this.roomList = rooms
+        this.loading = false
       })
 
       this.socket.on('room-created', (room) => {
