@@ -1,6 +1,7 @@
 const http = require("./http")
 const io = require("socket.io")(http)
 const RoomController = require("./controllers/room")
+require("./config/cron")
 
 io.on("connection", function(socket){
 

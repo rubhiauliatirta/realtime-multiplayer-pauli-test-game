@@ -81,7 +81,14 @@
       variant="success"
       class="mt-5"
       >Waiting for game master to start game...</h2>
-    <h3 class="mt-4">How to play</h3>
+    <br>
+    <b-button
+      variant="warning"
+      class="mt-5"
+      @click="showHowToPlay">
+      How to Play
+    </b-button>
+    <!-- <h3 class="mt-4">How to play</h3>
     <ul class="text-left border px-5 py-3">
       <li>Game baru bisa dimulai oleh game master ketika di dalam room sudah ada 4 orang player</li>
       <li>Nanti akan muncul 2 angka yang harus ditambahkan, jawaban yang benar adalah angka satuan dari hasil penambahan. </li>
@@ -91,7 +98,7 @@
       <li>pencet tombol angka pada keyboard laptop kalian untuk menjawab pertanyaan</li>
       <li>JANGAN SAMPAI SALAH. POKOKNYA JANGAN :)</li>
       <li>pemain yang pertama kali mencapai score 20 akan memenangkan pertandingan</li>
-    </ul>
+    </ul> -->
   </b-container>
 </template>
 
@@ -221,6 +228,9 @@ export default {
         }
         this.generateSoal();
       }
+    },
+    showHowToPlay(){
+      this.$myswal.showHowToPlay()
     }
   },
   computed: {
@@ -238,6 +248,7 @@ export default {
     this.generateSoal();
     window.addEventListener("keydown", this.handleKey);
     this.listenSocketEvent()
+    this.showHowToPlay()
     
   },
   destroyed(){
