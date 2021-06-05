@@ -1,4 +1,4 @@
-# pauli-undercover-socket
+# Realtime Pauli Test Game
 
 [pauli-undercover.web.app](https://pauli-undercover.web.app)
 
