@@ -2,7 +2,9 @@
 node_modules
 /dist
 fb.js
-.firebase
+/.firebase
+.firebaserc
+.env
 
 # local env files
 .env.local
