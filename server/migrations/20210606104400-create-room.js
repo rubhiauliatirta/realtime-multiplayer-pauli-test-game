@@ -9,8 +9,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       name: {
-        type: Sequelize.STRING,
-        unique : true
+        type: Sequelize.STRING
       },
       players: {
         type: Sequelize.JSON
