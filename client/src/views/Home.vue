@@ -1,5 +1,5 @@
 <template>
-  <div class="home" >
+  <div class="home">
     <b-form @submit.prevent="startGame">
       <b-form-input
         class="mb-5"
@@ -16,7 +16,8 @@
         class="lets-play animated infinite bounce delay-2s"
         @click.prevent="startGame"
         variant="outline-danger"
-      >Let's Play</b-button>
+        >Let's Play</b-button
+      >
     </b-form>
   </div>
 </template>
@@ -38,7 +39,9 @@ export default {
   },
   watch: {},
   created () {
-    let audio = new Audio('https://s3.amazonaws.com/freesoundeffects/mp3/mp3_428294.mp3')
+    let audio = new Audio(
+      'https://rubhi-file.s3-ap-southeast-1.amazonaws.com/mixkit-rain-and-thunder-crash-1258.wav'
+    )
     audio.play()
   },
   mounted () {},
@@ -57,7 +60,6 @@ export default {
       this.$router.push('/lobby')
     }
   }
-
 }
 </script>
 

@@ -32,6 +32,9 @@
         <h1 style="color: #df0054">Getting rooms...</h1>
       </div>
       <Room v-for="room in roomList" :key="room.id" :room="room" />
+      <h1 v-if="!loading && roomList.length === 0" style="color: #df0054">
+        No room available
+      </h1>
     </div>
   </div>
 </template>
