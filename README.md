@@ -1,6 +1,6 @@
 # Realtime Pauli Test Game
 
-Pauli & Kraepelin test (sometimes called _Pauli Test_ or _Tes Koran in Indonenesian_) is a test that measures the Speed, Accuracy, Consistency, and Endurance when one computes a simple summation mathematical problem, then interprets it into a measure of the personality of a person undergoing a test. This test is commonly used as one of psycological test in recruitment process in Indonesia.
+Pauli & Kraepelin test (sometimes called _Pauli Test_ or _Tes Koran in Indonesian_) is a test that measures the Speed, Accuracy, Consistency, and Endurance when one computes a simple summation mathematical problem, then interprets it into a measure of the personality of a person undergoing a test. This test is commonly used as one of psycological test in recruitment process in Indonesia.
 
 I turned this test into a realtime multiplayer game using socket.io which lets you race against your friends. But be careful. Don't make a mistake!
 
