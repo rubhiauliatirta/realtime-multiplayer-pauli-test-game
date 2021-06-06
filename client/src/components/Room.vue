@@ -8,9 +8,9 @@
     <h5 v-if="players.length >= 4">FULL</h5>
     <div class="w-100" v-if="players.length < 4">
       <div class="text-left">Player:</div>
-      <p class="text-left" v-for="(player, index) in players" :key="index">
+      <div class="text-left" v-for="(player, index) in players" :key="index">
         - {{ player }}
-      </p>
+      </div>
     </div>
     <b-button
       v-if="players.length < 4"

@@ -42,99 +42,99 @@
 <script>
 // @ is an alias to /src
 // import db from "@/fb";
-import io from "socket.io-client";
-import { mapState } from "vuex";
-import Room from "../components/Room.vue";
+import io from 'socket.io-client'
+import { mapState } from 'vuex'
+import Room from '../components/Room.vue'
 export default {
-  beforeRouteEnter(to, from, next) {
-    if (localStorage.getItem("playerName")) {
-      next();
+  beforeRouteEnter (to, from, next) {
+    if (localStorage.getItem('playerName')) {
+      next()
     } else {
-      next(false);
+      next(false)
     }
   },
-  name: "lobby",
+  name: 'lobby',
   components: {
-    Room,
+    Room
   },
-  data() {
+  data () {
     return {
-      roomName: "",
+      roomName: '',
       roomList: [],
       audio: null,
-      loading: false,
-    };
+      loading: false
+    }
   },
   computed: {
-    ...mapState(["socket", "myName"]),
+    ...mapState(['socket', 'myName'])
   },
   watch: {},
-  created() {
+  created () {
     this.audio = new Audio(
-      "https://rubhi-file.s3-ap-southeast-1.amazonaws.com/mixkit-rain-and-thunder-crash-1258.wav"
-    );
-    this.audio.addEventListener("ended", this._handleAudio, false);
-    this.audio.play();
+      'https://rubhi-file.s3-ap-southeast-1.amazonaws.com/mixkit-thunderstorm-background-sound-2398.wav'
+    )
+    this.audio.addEventListener('ended', this._handleAudio, false)
+    this.audio.play()
     if (this.socket === null) {
-      let socket = io(process.env.VUE_APP_SERVER);
-      this.$store.commit("setSocket", socket);
+      let socket = io(process.env.VUE_APP_SERVER)
+      this.$store.commit('setSocket', socket)
     }
-    this.$store.commit("resetState");
-    this.listenOnSocketEvent();
-    this.listRoom();
+    this.$store.commit('resetState')
+    this.listenOnSocketEvent()
+    this.listRoom()
   },
-  mounted() {},
+  mounted () {},
   methods: {
-    _handleAudio() {
-      this.audio.currentTime = 0;
-      this.audio.play();
+    _handleAudio () {
+      this.audio.currentTime = 0
+      this.audio.play()
     },
-    listRoom() {
-      this.socket.emit("get-rooms");
-      this.loading = true;
+    listRoom () {
+      this.socket.emit('get-rooms')
+      this.loading = true
     },
-    createRoom() {
+    createRoom () {
       let payload = {
         name: this.roomName,
-        creator: this.myName,
-      };
-      this.socket.emit("create-room", payload);
+        creator: this.myName
+      }
+      this.socket.emit('create-room', payload)
     },
-    listenOnSocketEvent() {
-      this.socket.on("get-rooms", (rooms) => {
-        this.roomList = rooms;
-        this.loading = false;
-      });
+    listenOnSocketEvent () {
+      this.socket.on('get-rooms', (rooms) => {
+        this.roomList = rooms
+        this.loading = false
+      })
 
-      this.socket.on("room-created", (room) => {
-        this.roomList.push(room);
-      });
+      this.socket.on('room-created', (room) => {
+        this.roomList.push(room)
+      })
 
-      this.socket.on("show-error", (message) => {
-        this.$myswal.showError(message);
-      });
+      this.socket.on('show-error', (message) => {
+        this.$myswal.showError(message)
+      })
 
-      this.socket.on("get-in-to-room", (room) => {
-        room.isCreator && this.$store.commit("setIsCreator", true);
-        this.$store.commit("setMyKey", room.playerKey);
-        this.$store.commit("setRoom", room.name);
-        this.$store.commit("setOtherPlayers", room.players);
-        this.$store.commit("setMyScore", 0);
-        this.$router.push("/play");
-      });
+      this.socket.on('get-in-to-room', (room) => {
+        room.isCreator && this.$store.commit('setIsCreator', true)
+        this.$store.commit('setMyKey', room.playerKey)
+        this.$store.commit('setRoom', room.name)
+        this.$store.commit('setOtherPlayers', room.players)
+        this.$store.commit('setMyScore', 0)
+        this.$router.push('/play')
+      })
 
-      this.socket.on("update-client-room", () => {
-        this.socket.emit("get-rooms");
-      });
-    },
+      this.socket.on('update-client-room', () => {
+        this.socket.emit('get-rooms')
+      })
+    }
   },
-  destoyed() {
-    this.socket.off("get-rooms");
-    this.socket.off("room-created");
-    this.socket.off("get-in-to-room");
-    this.audio.pause();
-  },
-};
+  destoyed () {
+    this.socket.off('get-rooms')
+    this.socket.off('room-created')
+    this.socket.off('get-in-to-room')
+    this.audio.pause()
+  }
+}
 </script>
 
 <style scoped>
