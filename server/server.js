@@ -1,10 +1,15 @@
 const http = require("./http")
-const io = require("socket.io")(http, { origins: '*:*' })
+const io = require("socket.io")(http, {
+  cors: {
+    origin: "https://pauli-test-game.web.app",
+    methods: ["GET", "POST"]
+  }
+})
 const RoomController = require("./controllers/room")
 require("./config/cron")
 
 io.on("connection", function (socket) {
-
+  console.log("masukkk2")
   //===== BAGIAN LIST ROOM ======
   socket.on('create-room', function (roomData) {
 
