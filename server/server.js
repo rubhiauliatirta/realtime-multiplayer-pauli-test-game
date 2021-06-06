@@ -1,7 +1,7 @@
 const http = require("./http")
 const io = require("socket.io")(http, {
   cors: {
-    origin: "https://pauli-test-game.web.app",
+    origin: ["https://pauli-test-game.web.app", "http://localhost:8081", "https://pauli-test-game.firebaseapp.com", "https://pauli-game.rubhiauliatirta.com"],
     methods: ["GET", "POST"]
   }
 })
