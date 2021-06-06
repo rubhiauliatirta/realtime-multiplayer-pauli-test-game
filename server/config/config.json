@@ -4,12 +4,10 @@
     "password": "postgres",
     "database": "undercover_dev",
     "host": "127.0.0.1",
-    "dialect": "postgres",
-    "operatorsAliases": false
+    "dialect": "postgres"
   },
   "production": {
     "use_env_variable": "DATABASE_URL",
-    "dialect": "postgres",
-    "operatorsAliases": false
+    "dialect": "postgres"
   }
 }
