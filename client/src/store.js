@@ -1,56 +1,55 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-//import db from '@/fb'
+// import db from '@/fb'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    socket : null,
-    room:"",
-    isCreator : false,
-    myKey : "",
-    myName : "",
-    myScore:"",
-    otherPlayers:{}
+    socket: null,
+    room: '',
+    isCreator: false,
+    myKey: '',
+    myName: '',
+    myScore: '',
+    otherPlayers: {}
   },
   mutations: {
-    resetState(state, payload){
-      state.room = "",
-      state.isCreator  =  false,
-      state.myKey  =  "",
-      state.myScore = 0,
+    resetState (state, payload) {
+      state.room = ''
+      state.isCreator = false
+      state.myKey = ''
+      state.myScore = 0
       state.otherPlayers = {}
-
     },
-    setRoom(state,payload){
+    setRoom (state, payload) {
       state.room = payload
     },
-    setIsCreator(state,payload){
+    setIsCreator (state, payload) {
       state.isCreator = payload
     },
-    setMyKey(state,payload){
+    setMyKey (state, payload) {
       state.myKey = payload
     },
-    setMyName(state,payload){
+    setMyName (state, payload) {
       state.myName = payload
     },
-    setMyScore(state,payload){
+    setMyScore (state, payload) {
       state.myScore = payload
     },
-    setOtherPlayers(state,payload){
+    setOtherPlayers (state, payload) {
       delete payload[state.myKey]
       console.log(payload)
       state.otherPlayers = payload
     },
-    updateOtherScore(state, payload){
+    updateOtherScore (state, payload) {
       state.otherPlayers[payload.key] = payload.score
     },
-    setSocket(state, payload){
+    setSocket (state, payload) {
       state.socket = payload
     }
   },
   actions: {
-   
+
   }
 })

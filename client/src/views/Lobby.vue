@@ -1,10 +1,10 @@
 <template>
   <div class="lobby py-4">
     <b-form action>
-      <h1 style="color: #df0054; font-weight:bold">Hi, {{myName}}</h1>
+      <h1 style="color: #df0054; font-weight: bold">Hi, {{ myName }}</h1>
       <b-row class="my-1 justify-content-center">
         <input
-          style="width: 300px;"
+          style="width: 300px"
           id="input-small"
           size="lg"
           placeholder="Room Name (minimal 4 character)"
@@ -13,83 +13,91 @@
           maxlength="12"
           minlength="4"
           autocomplete="off"
+        />
+        <b-button
+          type="submit"
+          @click.prevent="createRoom"
+          :disabled="roomName.length < 4"
+          >create room</b-button
         >
-        <b-button type="submit" @click.prevent="createRoom" :disabled="roomName.length < 4">create room</b-button>
       </b-row>
     </b-form>
-    <div class="container mt-4 w-100" style="display: flex; flex-wrap: wrap;">
+    <div class="container mt-4 w-100" style="display: flex; flex-wrap: wrap">
       <div v-if="loading" class="w-100 text-center">
-        <b-spinner variant="danger" label="Spinning" style="width: 4rem; height: 4rem;"></b-spinner>
-        <h1 style="color: #df0054;">Getting rooms...</h1>
+        <b-spinner
+          variant="danger"
+          label="Spinning"
+          style="width: 4rem; height: 4rem"
+        ></b-spinner>
+        <h1 style="color: #df0054">Getting rooms...</h1>
       </div>
-      <Room
-        v-for="(room) in roomList" :key="room.id"
-        :room="room"/>
+      <Room v-for="room in roomList" :key="room.id" :room="room" />
     </div>
-    
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-//import db from "@/fb";
+// import db from "@/fb";
 import io from 'socket.io-client'
-import {mapState, mapMutations} from 'vuex'
+import { mapState } from 'vuex'
 import Room from '../components/Room.vue'
 export default {
   beforeRouteEnter (to, from, next) {
-   if(localStorage.getItem("playerName")){
-     next()
-   }else {
-     next(false)
-   }
+    if (localStorage.getItem('playerName')) {
+      next()
+    } else {
+      next(false)
+    }
   },
-  name: "lobby",
-  components : {
+  name: 'lobby',
+  components: {
     Room
   },
-  data() {
+  data () {
     return {
-      roomName: "",
+      roomName: '',
       roomList: [],
-      audio : null,
-      loading : false
-    };
+      audio: null,
+      loading: false
+    }
   },
-  computed : {
-    ...mapState(["socket", "myName"])
+  computed: {
+    ...mapState(['socket', 'myName'])
   },
   watch: {},
-  created() {
-     this.audio = new Audio('https://s3.amazonaws.com/freesoundeffects/mp3/mp3_428294.mp3');
-      this.audio.addEventListener('ended', this._handleAudio, false);
-      this.audio.play();
-    if(this.socket === null){
+  created () {
+    this.audio = new Audio(
+      'https://s3.amazonaws.com/freesoundeffects/mp3/mp3_428294.mp3'
+    )
+    this.audio.addEventListener('ended', this._handleAudio, false)
+    this.audio.play()
+    if (this.socket === null) {
       let socket = io(process.env.VUE_APP_SERVER)
-      this.$store.commit('setSocket',socket)
+      this.$store.commit('setSocket', socket)
     }
     this.$store.commit('resetState')
     this.listenOnSocketEvent()
-    this.listRoom();
+    this.listRoom()
   },
-  mounted() {},
+  mounted () {},
   methods: {
-    _handleAudio(){
-      this.audio.currentTime = 0;
-      this.audio.play();
+    _handleAudio () {
+      this.audio.currentTime = 0
+      this.audio.play()
     },
-    listRoom() {
+    listRoom () {
       this.socket.emit('get-rooms')
       this.loading = true
     },
-    createRoom() {
+    createRoom () {
       let payload = {
-        name : this.roomName,
-        creator : this.myName
+        name: this.roomName,
+        creator: this.myName
       }
       this.socket.emit('create-room', payload)
     },
-    listenOnSocketEvent(){
+    listenOnSocketEvent () {
       this.socket.on('get-rooms', (rooms) => {
         this.roomList = rooms
         this.loading = false
@@ -97,34 +105,33 @@ export default {
 
       this.socket.on('room-created', (room) => {
         this.roomList.push(room)
-        
       })
 
       this.socket.on('show-error', (message) => {
-         this.$myswal.showError(message)
+        this.$myswal.showError(message)
       })
 
       this.socket.on('get-in-to-room', (room) => {
-        room.isCreator && this.$store.commit("setIsCreator", true)
-        this.$store.commit("setMyKey", room.playerKey)
-        this.$store.commit("setRoom", room.name) 
-        this.$store.commit("setOtherPlayers", room.players)
-        this.$store.commit("setMyScore", 0)
-        this.$router.push('/play') 
+        room.isCreator && this.$store.commit('setIsCreator', true)
+        this.$store.commit('setMyKey', room.playerKey)
+        this.$store.commit('setRoom', room.name)
+        this.$store.commit('setOtherPlayers', room.players)
+        this.$store.commit('setMyScore', 0)
+        this.$router.push('/play')
       })
 
-      this.socket.on('update-client-room', ()=>{
+      this.socket.on('update-client-room', () => {
         this.socket.emit('get-rooms')
       })
     }
   },
-  destoyed(){
+  destoyed () {
     this.socket.off('get-rooms')
     this.socket.off('room-created')
     this.socket.off('get-in-to-room')
     this.audio.pause()
   }
-};
+}
 </script>
 
 <style scoped>

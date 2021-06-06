@@ -23,7 +23,7 @@ export default new Router({
     {
       path: '/play',
       name: 'playBoard',
-      component : PlayBoard
+      component: PlayBoard
     }
   ]
 })

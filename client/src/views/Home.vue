@@ -23,42 +23,42 @@
 
 <script>
 // @ is an alias to /src
-//import db from "@/fb";
+// import db from "@/fb";
 import io from 'socket.io-client'
-import {mapState, mapMutations} from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
-  name: "home",
-  data() {
+  name: 'home',
+  data () {
     return {
-      playerName: "",
-    };
+      playerName: ''
+    }
   },
-  computed : {
-    ...mapState(["socket", "myName"])
+  computed: {
+    ...mapState(['socket', 'myName'])
   },
   watch: {},
-  created() {
-    let audio = new Audio('https://s3.amazonaws.com/freesoundeffects/mp3/mp3_428294.mp3');
-    audio.play();
+  created () {
+    let audio = new Audio('https://s3.amazonaws.com/freesoundeffects/mp3/mp3_428294.mp3')
+    audio.play()
   },
-  mounted() {},
+  mounted () {},
   methods: {
     ...mapMutations(['setSocket', 'setMyName']),
-    startGame() {
-       this.setMyName(this.playerName)
-       if(this.socket === null){
-         let socket = io(process.env.VUE_APP_SERVER)
-         //let socket = io("https://murmuring-wildwood-15232.herokuapp.com/")
-         //let socket = io("https://guarded-harbor-22113.herokuapp.com/")
-         //let socket = io("http://localhost:3000")
-         this.setSocket(socket)
-       }
-       localStorage.setItem("playerName", this.playerName)
-       this.$router.push("/lobby")
-    },
+    startGame () {
+      this.setMyName(this.playerName)
+      if (this.socket === null) {
+        let socket = io(process.env.VUE_APP_SERVER)
+        // let socket = io("https://murmuring-wildwood-15232.herokuapp.com/")
+        // let socket = io("https://guarded-harbor-22113.herokuapp.com/")
+        // let socket = io("http://localhost:3000")
+        this.setSocket(socket)
+      }
+      localStorage.setItem('playerName', this.playerName)
+      this.$router.push('/lobby')
+    }
   }
 
-};
+}
 </script>
 
 <style scoped>

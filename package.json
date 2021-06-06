@@ -1,0 +1,23 @@
+{
+  "name": "realtime-multiplayer-pauli-test-game",
+  "version": "1.0.0",
+  "description": "[pauli-undercover.web.app](https://pauli-undercover.web.app)",
+  "main": "index.js",
+  "scripts": {
+    "build": "git subtree push --prefix server heroku master"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rubhiauliatirta/realtime-multiplayer-pauli-test-game.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rubhiauliatirta/realtime-multiplayer-pauli-test-game/issues"
+  },
+  "homepage": "https://github.com/rubhiauliatirta/realtime-multiplayer-pauli-test-game#readme",
+  "dependencies": {
+    "cron": "^1.8.2"
+  }
+}

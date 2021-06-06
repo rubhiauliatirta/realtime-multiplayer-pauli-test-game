@@ -1,17 +1,17 @@
-import Vue from 'vue';
-import VueSweetalert2 from 'vue-sweetalert2';
-import 'sweetalert2/dist/sweetalert2.min.css';
+import Vue from 'vue'
+import VueSweetalert2 from 'vue-sweetalert2'
+import 'sweetalert2/dist/sweetalert2.min.css'
 
-Vue.use(VueSweetalert2);
+Vue.use(VueSweetalert2)
 
-function showError(errMessage) {
+function showError (errMessage) {
   Vue.swal({
     icon: 'error',
-    text: errMessage,
+    text: errMessage
   })
 }
 
-function showConfirmation(message, callback) {
+function showConfirmation (message, callback) {
   Vue.swal({
     text: message,
     icon: 'warning',
@@ -24,25 +24,25 @@ function showConfirmation(message, callback) {
   })
 }
 
-function showMessage(message){
+function showMessage (message) {
   Vue.swal(message)
 }
 
-function showWin(){
+function showWin () {
   Vue.swal({
     imageUrl: 'https://thumbs.gfycat.com/VapidRecklessGalapagosmockingbird-size_restricted.gif',
     imageHeight: 400,
     imageAlt: 'Winning image',
-    title: "Congratulation, you are the winner!"
+    title: 'Congratulation, you are the winner!'
   })
 }
 
-function showHowToPlay(){
+function showHowToPlay () {
   Vue.swal({
     title: '<strong>How to Play</strong>',
     icon: 'info',
     width: '70%',
-    html:`
+    html: `
     <ul class="text-left border px-5 py-3">
       <li>Game bisa dimulai oleh game master ketika di dalam room sudah ada 4 orang player.</li>
       <li>Setelah game dimulai, nanti akan muncul 2 angka yang harus ditambahkan, jawaban yang benar adalah angka satuan dari hasil penambahan. Contoh:</li>

@@ -25,7 +25,7 @@
           header-tag="header"
           header-bg-variant="dark"
           :footer="isCreator ? 'Game Master' : 'Participant'"
-          
+
           footer-tag="footer"
           footer-bg-variant="success"
           footer-border-variant="dark"
@@ -33,19 +33,19 @@
           style="width: 10rem; min-width:10rem; margin: 10px"
           :key="myKey"
         >
-    
+
           <h1>{{myScore}}</h1>
           <b-nav>
-            <b-nav-item  
+            <b-nav-item
               class="mx-auto"
               variant="danger"
               :disabled="isCreator"
               :link-classes="isCreator ? {'text-secondary':true} : {'text-danger':true}"
-              @click.prevent="$router.push('/lobby')" 
+              @click.prevent="$router.push('/lobby')"
               v-if="!isGameEnded && !isPlaying"
               >Leave</b-nav-item>
           </b-nav>
-     
+
         </b-card>
 
         <b-card
@@ -66,18 +66,18 @@
         </b-card>
       </b-row>
     </div>
-    <b-button v-if="!isGameEnded && isCreator && !isPlaying" 
+    <b-button v-if="!isGameEnded && isCreator && !isPlaying"
       :disabled="Object.keys(otherPlayers).length < 3"
       variant="success"
       class="mt-5"
       @click="startGame">START GAME</b-button>
 
-    <b-button v-if="isGameEnded" 
+    <b-button v-if="isGameEnded"
       variant="primary"
       class="mt-5"
       @click="leaveRoom">Back to Lobby</b-button>
 
-    <h2 v-if="!isGameEnded && !isCreator && !isPlaying" 
+    <h2 v-if="!isGameEnded && !isCreator && !isPlaying"
       variant="success"
       class="mt-5"
       >Waiting for game master to start game...</h2>
@@ -103,120 +103,120 @@
 </template>
 
 <script>
-import random from "@/helpers/randomNumber";
-import { mapState } from "vuex";
-//import db from "@/fb";
-//import Chat from '@/components/Chat.vue'
+import random from '@/helpers/randomNumber'
+import { mapState } from 'vuex'
+// import db from "@/fb";
+// import Chat from '@/components/Chat.vue'
 
 export default {
   beforeRouteEnter (to, from, next) {
-    if(from.name){
+    if (from.name) {
       next()
-    }else {
-      next("/")
+    } else {
+      next('/')
     }
   },
   beforeRouteLeave (to, from, next) {
-   if(this.isPlaying){
-      this.$myswal.showError("Cannot leave while playing")
+    if (this.isPlaying) {
+      this.$myswal.showError('Cannot leave while playing')
       next(false)
-   } else if (this.isCreator && !this.isGameEnded){
-      this.$myswal.showError("Game master cannot leave this room")
+    } else if (this.isCreator && !this.isGameEnded) {
+      this.$myswal.showError('Game master cannot leave this room')
       next(false)
-   } else { 
-     this.$myswal.showConfirmation("Do you want to leave this room?", (result) => {
-       if(result){
-         this.socket.emit("leave-room", {
-            roomName : this.room,
-            playerKey : this.myKey
+    } else {
+      this.$myswal.showConfirmation('Do you want to leave this room?', (result) => {
+        if (result) {
+          this.socket.emit('leave-room', {
+            roomName: this.room,
+            playerKey: this.myKey
           })
           next()
-       }else {
-         next(false)
-       }
-     })
-   }
+        } else {
+          next(false)
+        }
+      })
+    }
   },
-  name : "playBoard",
-  data() {
+  name: 'playBoard',
+  data () {
     return {
       firstNumber: 0,
       secondNumber: 0,
       result: 0,
       ghost: false,
-      isWinning:false,
-      isPlaying:false,
-      isGameEnded :false
-    };
+      isWinning: false,
+      isPlaying: false,
+      isGameEnded: false
+    }
   },
   components: {},
-  watch : {
-    myScore(value){
+  watch: {
+    myScore (value) {
       let payload = {
-        roomName : this.room,
-        key : this.myKey,
-        score : value
+        roomName: this.room,
+        key: this.myKey,
+        score: value
       }
       this.socket.emit('update-score', payload)
     }
   },
   methods: {
-    startGame(){
+    startGame () {
       let payload = {
-        roomName : this.room,
-        isPlaying : true
+        roomName: this.room,
+        isPlaying: true
       }
       this.socket.emit('change-isplaying', payload)
     },
-    leaveRoom(){
-      this.$router.push("/lobby")
+    leaveRoom () {
+      this.$router.push('/lobby')
     },
-    videoEnded() {
-      this.ghost = false;
+    videoEnded () {
+      this.ghost = false
     },
-    generateSoal() {
-      this.firstNumber = random();
-      this.secondNumber = random();
-      this.result = this.solution(this.firstNumber, this.secondNumber);
+    generateSoal () {
+      this.firstNumber = random()
+      this.secondNumber = random()
+      this.result = this.solution(this.firstNumber, this.secondNumber)
     },
-    solution(x, y) {
-      return (x + y) % 10;
+    solution (x, y) {
+      return (x + y) % 10
     },
-    listenSocketEvent(){
+    listenSocketEvent () {
       this.socket.on('change-isplaying', (value) => {
         this.isPlaying = value
       })
       this.socket.on('end-game', () => {
         this.isPlaying = false
         this.isGameEnded = true
-        if(this.isWinning){
+        if (this.isWinning) {
           this.$myswal.showWin()
         } else {
-          this.$myswal.showMessage("Sorry, you lost :(")
+          this.$myswal.showMessage('Sorry, you lost :(')
         }
       })
-      this.socket.on('update-score', (payload)=>{
+      this.socket.on('update-score', (payload) => {
         this.$store.commit('updateOtherScore', payload)
       })
-      this.socket.on('player-joined', (players)=>{
+      this.socket.on('player-joined', (players) => {
         this.$store.commit('setOtherPlayers', players)
       })
-      this.socket.on('player-left', (players)=>{
+      this.socket.on('player-left', (players) => {
         this.$store.commit('setOtherPlayers', players)
       })
       this.socket.on('show-error', (message) => {
         this.$myswal.showError(message)
       })
     },
-    handleKey(e){
+    handleKey (e) {
       if (e.keyCode >= 48 && e.keyCode < 58 && this.isPlaying) {
-        let answer = getUserAnswer(e.keyCode);     
+        let answer = getUserAnswer(e.keyCode)
         if (answer === this.result) {
           this.$store.commit('setMyScore', this.myScore + 1)
           let payload = {
-            key : this.myKey,
-            score : this.myScore,
-            roomName : this.room
+            key: this.myKey,
+            score: this.myScore,
+            roomName: this.room
           }
           this.socket.emit('update-score', payload)
           if (this.myScore === 20) {
@@ -224,65 +224,64 @@ export default {
             this.socket.emit('end-game', this.room)
           }
         } else {
-          this.ghost = true;
+          this.ghost = true
         }
-        this.generateSoal();
+        this.generateSoal()
       }
     },
-    showHowToPlay(){
+    showHowToPlay () {
       this.$myswal.showHowToPlay()
     }
   },
   computed: {
     ...mapState([
-      "isCreator",
-      "myName",
-      "myKey",
-      "myScore",
-      "room",
-      "socket",
-      "otherPlayers"
+      'isCreator',
+      'myName',
+      'myKey',
+      'myScore',
+      'room',
+      'socket',
+      'otherPlayers'
     ])
   },
-  created() {
-    this.generateSoal();
-    window.addEventListener("keydown", this.handleKey);
+  created () {
+    this.generateSoal()
+    window.addEventListener('keydown', this.handleKey)
     this.listenSocketEvent()
     this.showHowToPlay()
-    
   },
-  destroyed(){
+  destroyed () {
     this.socket.off('change-isplaying')
     this.socket.off('end-game')
     this.socket.off('update-score')
     this.socket.off('player-joined')
     this.socket.off('show-error')
     this.socket.off('player-left')
-    window.removeEventListener('keydown',this.handleKey)
+    window.removeEventListener('keydown', this.handleKey)
   }
-  
-};
 
-function getUserAnswer(buttonCode){
+}
+
+function getUserAnswer (buttonCode) {
   switch (buttonCode) {
-    case 48: return 0; 
-    case 49: return 1;
-    case 50: return 2;
-    case 51: return 3;
-    case 52: return 4;
-    case 53: return 5;
-    case 54: return 6;
-    case 55: return 7;
-    case 56: return 8;
-    case 57: return 9;
-    default : return -1;
+    case 48: return 0
+    case 49: return 1
+    case 50: return 2
+    case 51: return 3
+    case 52: return 4
+    case 53: return 5
+    case 54: return 6
+    case 55: return 7
+    case 56: return 8
+    case 57: return 9
+    default : return -1
   }
 }
 </script>
 
 <style scoped>
 
-b-card-text { 
+b-card-text {
   width: 100px;
   height: 100px;
 }

@@ -6,10 +6,10 @@
 
 <script>
 export default {
-  created(){
-    let playerName = localStorage.getItem("playerName")
-    if(playerName){
-      this.$store.commit("setMyName", playerName)
+  created () {
+    let playerName = localStorage.getItem('playerName')
+    if (playerName) {
+      this.$store.commit('setMyName', playerName)
     }
   }
 }

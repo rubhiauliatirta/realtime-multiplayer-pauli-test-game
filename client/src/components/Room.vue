@@ -1,7 +1,7 @@
 <template>
   <div class="room p-2 m-2" style="min-width:200px; box-shadow: 5px 5px 10px red;">
     <h4>{{room.name}}</h4>
-   
+
     <h5 v-if="players.length >= 4">FULL</h5>
     <div class="w-100" v-if="players.length < 4">
       <p class="text-left" v-for="(player, index) in players" :key="index">{{player}}</p>
@@ -15,24 +15,23 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import { mapState } from 'vuex'
 export default {
-  props : ["room"],
-  computed : {
-    ...mapState(["socket", "myName"]),
-    players(){
-   
-      return Object.keys(this.room.players).map(key => key.split("-")[1])     
+  props: ['room'],
+  computed: {
+    ...mapState(['socket', 'myName']),
+    players () {
+      return Object.keys(this.room.players).map(key => key.split('-')[1])
     }
   },
-  methods : {
-    joinRoom(name) {
+  methods: {
+    joinRoom (name) {
       let payload = {
-        playerName : this.myName,
-        roomName : this.room.name
+        playerName: this.myName,
+        roomName: this.room.name
       }
-      this.socket.emit('join-room', payload)  
-    },
+      this.socket.emit('join-room', payload)
+    }
   }
 }
 </script>
