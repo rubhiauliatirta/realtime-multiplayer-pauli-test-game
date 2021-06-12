@@ -60,7 +60,7 @@ io.on("connection", function (socket) {
 
   socket.on('change-isplaying', function (payload) {
     io.to(payload.roomName).emit('change-isplaying', payload.isPlaying) //trigger room untuk memulai/menghentikan permainan
-    io.to("notify-room-playing", payload.roomName)
+    io.emit("notify-room-playing", payload.roomName)
   })
   socket.on('update-score', function (payload) {
     socket.broadcast.to(payload.roomName).emit('update-score', payload) //trigger client untuk mengupdate score
