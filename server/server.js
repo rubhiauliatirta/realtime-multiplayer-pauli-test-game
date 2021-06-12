@@ -1,7 +1,7 @@
 const http = require("./http")
 const io = require("socket.io")(http, {
   cors: {
-    origin: ["https://pauli-test-game.web.app", "http://localhost:8081", "https://pauli-test-game.firebaseapp.com", "https://pauli-game.rubhiauliatirta.com"],
+    origin: ["https://pauli-test-game.web.app", "http://localhost:8081", "https://pauli-test-game.firebaseapp.com", "https://pauli-game-fb.rubhiauliatirta.com"],
     methods: ["GET", "POST"]
   }
 })
@@ -9,7 +9,6 @@ const RoomController = require("./controllers/room")
 require("./config/cron")
 
 io.on("connection", function (socket) {
-  console.log("masukkk2")
   //===== BAGIAN LIST ROOM ======
   socket.on('create-room', function (roomData) {
 
@@ -61,6 +60,7 @@ io.on("connection", function (socket) {
 
   socket.on('change-isplaying', function (payload) {
     io.to(payload.roomName).emit('change-isplaying', payload.isPlaying) //trigger room untuk memulai/menghentikan permainan
+    io.to("notify-room-playing", payload.roomName)
   })
   socket.on('update-score', function (payload) {
     socket.broadcast.to(payload.roomName).emit('update-score', payload) //trigger client untuk mengupdate score
