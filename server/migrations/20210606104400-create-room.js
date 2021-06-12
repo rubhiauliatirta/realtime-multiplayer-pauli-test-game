@@ -15,6 +15,10 @@ module.exports = {
       players: {
         type: Sequelize.JSON
       },
+      isPlaying: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

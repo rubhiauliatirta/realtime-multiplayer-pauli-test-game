@@ -14,7 +14,12 @@ io.on("connection", function (socket) {
 
     RoomController.create(roomData, function (err, createdRoom) {
       if (err) {
-        socket.emit('show-error', 'Failed to create room')
+        if (err instanceof UniqueConstraintError) {
+          socket.emit('show-error', 'Room name must be unique')
+        } else {
+          socket.emit('show-error', 'Failed to create room')
+        }
+
       } else {
         io.emit('room-created', createdRoom) //send room to all client
         socket.join(createdRoom.name) //daftarin creator room ke room yang dia bikin
@@ -60,7 +65,11 @@ io.on("connection", function (socket) {
 
   socket.on('change-isplaying', function (payload) {
     io.to(payload.roomName).emit('change-isplaying', payload.isPlaying) //trigger room untuk memulai/menghentikan permainan
-    io.emit("notify-room-playing", payload.roomName)
+    if (payload.isPlaying === true) {
+      RoomController.play(payload.roomName)
+      io.emit("notify-room-playing", payload.roomName)
+    }
+
   })
   socket.on('update-score', function (payload) {
     socket.broadcast.to(payload.roomName).emit('update-score', payload) //trigger client untuk mengupdate score

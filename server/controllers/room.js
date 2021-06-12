@@ -45,15 +45,12 @@ class RoomController {
         callback(null, createdRoom.dataValues) //bawa infomasi room yang baru saja dibuat
       })
       .catch(err => {
-        console.log(err)
         callback(err)
       })
 
   }
 
   static join(payload, callback) {
-
-    console.log(callback)
     var job = queue.create('join-to-room', {
       payload,
       callback
@@ -69,18 +66,15 @@ class RoomController {
   }
 
   static findAll(callback) {
-    console.log("masuuukk findAll")
     Room.findAll({
       order: [
         ['id', 'ASC'],
       ],
     })
       .then(results => {
-        console.log("masuuukk then" + results)
         callback(null, results)
       })
       .catch(err => {
-        console.log("masuuukk err" + err)
         callback(err)
       })
 
@@ -93,12 +87,9 @@ class RoomController {
       }
     })
       .then(result => {
-        console.log("Success delete room")
         callback(null)
       })
-      .catch(err => {
-        console.log(err)
-      })
+      .catch(console.log)
   }
 
   static leave(payload, callback) {
@@ -120,6 +111,14 @@ class RoomController {
       .catch(err => {
         callback(err)
       })
+  }
+
+  static play(roomName) {
+    Room.update({ isPlaying: true }, {
+      where: {
+        name: roomName
+      }
+    }).catch(console.log)
   }
 }
 
