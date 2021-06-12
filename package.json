@@ -4,7 +4,7 @@
   "description": "[pauli-undercover.web.app](https://pauli-undercover.web.app)",
   "main": "index.js",
   "scripts": {
-    "build": "git subtree push --prefix server heroku master"
+    "deploy:server": "git subtree push --prefix server heroku master"
   },
   "repository": {
     "type": "git",
