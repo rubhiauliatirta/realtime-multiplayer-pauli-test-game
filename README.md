@@ -6,7 +6,7 @@ I turned this test into a realtime multiplayer game using socket.io which lets y
 
 ## Links
 
-- Live Application: [https://pauli-game.rubhiauliatirta.com](https://pauli-game.rubhiauliatirta.com)
+- Live Application: [https://pauli-game-fb.rubhiauliatirta.com](https://pauli-game-fb.rubhiauliatirta.com)
 - Alternative Link: [pauli-undercover.web.app](https://pauli-undercover.web.app)
 
 ## Tech Stack

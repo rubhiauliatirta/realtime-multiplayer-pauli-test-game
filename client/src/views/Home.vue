@@ -25,39 +25,34 @@
 <script>
 // @ is an alias to /src
 // import db from "@/fb";
-import io from 'socket.io-client'
-import { mapState, mapMutations } from 'vuex'
+import io from "socket.io-client";
+import { mapState, mapMutations } from "vuex";
 export default {
-  name: 'home',
-  data () {
+  name: "home",
+  data() {
     return {
-      playerName: ''
-    }
+      playerName: "",
+    };
   },
   computed: {
-    ...mapState(['socket', 'myName'])
+    ...mapState(["socket", "myName"]),
   },
   watch: {},
-  created () {
-    let audio = new Audio(
-      'https://rubhi-file.s3-ap-southeast-1.amazonaws.com/mixkit-thunderstorm-background-sound-2398.wav'
-    )
-    audio.play()
-  },
-  mounted () {},
+  created() {},
+  mounted() {},
   methods: {
-    ...mapMutations(['setSocket', 'setMyName']),
-    startGame () {
-      this.setMyName(this.playerName)
+    ...mapMutations(["setSocket", "setMyName"]),
+    startGame() {
+      this.setMyName(this.playerName);
       if (this.socket === null) {
-        let socket = io(process.env.VUE_APP_SERVER)
-        this.setSocket(socket)
+        let socket = io(process.env.VUE_APP_SERVER);
+        this.setSocket(socket);
       }
-      localStorage.setItem('playerName', this.playerName)
-      this.$router.push('/lobby')
-    }
-  }
-}
+      localStorage.setItem("playerName", this.playerName);
+      this.$router.push("/lobby");
+    },
+  },
+};
 </script>
 
 <style scoped>

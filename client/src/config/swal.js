@@ -4,14 +4,14 @@ import 'sweetalert2/dist/sweetalert2.min.css'
 
 Vue.use(VueSweetalert2)
 
-function showError (errMessage) {
+function showError(errMessage) {
   Vue.swal({
     icon: 'error',
     text: errMessage
   })
 }
 
-function showConfirmation (message, callback) {
+function showConfirmation(message, callback) {
   Vue.swal({
     text: message,
     icon: 'warning',
@@ -24,11 +24,11 @@ function showConfirmation (message, callback) {
   })
 }
 
-function showMessage (message) {
+function showMessage(message) {
   Vue.swal(message)
 }
 
-function showWin () {
+function showWin() {
   Vue.swal({
     imageUrl: 'https://thumbs.gfycat.com/VapidRecklessGalapagosmockingbird-size_restricted.gif',
     imageHeight: 400,
@@ -37,14 +37,14 @@ function showWin () {
   })
 }
 
-function showHowToPlay () {
+function showHowToPlay() {
   Vue.swal({
     title: '<strong>How to Play</strong>',
     icon: 'info',
     width: '70%',
     html: `
     <ul class="text-left border px-5 py-3">
-      <li>Game bisa dimulai oleh game master ketika di dalam room sudah ada 4 orang player.</li>
+      <li>Game bisa dimulai oleh game master ketika di dalam room sudah ada lebih dari 1 orang player.</li>
       <li>Setelah game dimulai, nanti akan muncul 2 angka yang harus ditambahkan, jawaban yang benar adalah angka satuan dari hasil penambahan. Contoh:</li>
       <ul>
         <li>2 + 4 = <strong>6</strong> => Jawaban yang tepat adalah <strong>6</strong></li>
