@@ -24,25 +24,25 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState } from 'vuex'
 export default {
-  props: ["room", "isPlaying"],
+  props: ['room', 'isPlaying'],
   computed: {
-    ...mapState(["socket", "myName"]),
-    players() {
-      return Object.keys(this.room.players).map((key) => key.split("-")[1]);
-    },
+    ...mapState(['socket', 'myName']),
+    players () {
+      return Object.keys(this.room.players).map((key) => key.split('-')[1])
+    }
   },
   methods: {
-    joinRoom(name) {
+    joinRoom (name) {
       let payload = {
         playerName: this.myName,
-        roomName: this.room.name,
-      };
-      this.socket.emit("join-room", payload);
-    },
-  },
-};
+        roomName: this.room.name
+      }
+      this.socket.emit('join-room', payload)
+    }
+  }
+}
 </script>
 
 <style scoped>

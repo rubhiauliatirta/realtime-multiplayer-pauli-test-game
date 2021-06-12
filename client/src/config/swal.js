@@ -4,14 +4,14 @@ import 'sweetalert2/dist/sweetalert2.min.css'
 
 Vue.use(VueSweetalert2)
 
-function showError(errMessage) {
+function showError (errMessage) {
   Vue.swal({
     icon: 'error',
     text: errMessage
   })
 }
 
-function showConfirmation(message, callback) {
+function showConfirmation (message, callback) {
   Vue.swal({
     text: message,
     icon: 'warning',
@@ -24,11 +24,11 @@ function showConfirmation(message, callback) {
   })
 }
 
-function showMessage(message) {
+function showMessage (message) {
   Vue.swal(message)
 }
 
-function showWin() {
+function showWin () {
   Vue.swal({
     imageUrl: 'https://thumbs.gfycat.com/VapidRecklessGalapagosmockingbird-size_restricted.gif',
     imageHeight: 400,
@@ -37,7 +37,7 @@ function showWin() {
   })
 }
 
-function showHowToPlay() {
+function showHowToPlay () {
   Vue.swal({
     title: '<strong>How to Play</strong>',
     icon: 'info',

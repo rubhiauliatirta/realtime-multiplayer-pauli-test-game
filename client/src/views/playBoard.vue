@@ -95,43 +95,43 @@
 </template>
 
 <script>
-import random from "@/helpers/randomNumber";
-import { mapState } from "vuex";
+import random from '@/helpers/randomNumber'
+import { mapState } from 'vuex'
 
 export default {
-  beforeRouteEnter(to, from, next) {
+  beforeRouteEnter (to, from, next) {
     if (from.name) {
-      next();
+      next()
     } else {
-      next("/");
+      next('/')
     }
   },
-  beforeRouteLeave(to, from, next) {
+  beforeRouteLeave (to, from, next) {
     if (this.isPlaying) {
-      this.$myswal.showError("Cannot leave while playing");
-      next(false);
+      this.$myswal.showError('Cannot leave while playing')
+      next(false)
     } else if (this.isCreator && !this.isGameEnded) {
-      this.$myswal.showError("Game master cannot leave this room");
-      next(false);
+      this.$myswal.showError('Game master cannot leave this room')
+      next(false)
     } else {
       this.$myswal.showConfirmation(
-        "Do you want to leave this room?",
+        'Do you want to leave this room?',
         (result) => {
           if (result) {
-            this.socket.emit("leave-room", {
+            this.socket.emit('leave-room', {
               roomName: this.room,
-              playerKey: this.myKey,
-            });
-            next();
+              playerKey: this.myKey
+            })
+            next()
           } else {
-            next(false);
+            next(false)
           }
         }
-      );
+      )
     }
   },
-  name: "playBoard",
-  data() {
+  name: 'playBoard',
+  data () {
     return {
       firstNumber: 0,
       secondNumber: 0,
@@ -139,145 +139,145 @@ export default {
       ghost: false,
       isWinning: false,
       isPlaying: false,
-      isGameEnded: false,
-    };
+      isGameEnded: false
+    }
   },
   components: {},
   watch: {
-    myScore(value) {
+    myScore (value) {
       let payload = {
         roomName: this.room,
         key: this.myKey,
-        score: value,
-      };
-      this.socket.emit("update-score", payload);
-    },
+        score: value
+      }
+      this.socket.emit('update-score', payload)
+    }
   },
   methods: {
-    startGame() {
+    startGame () {
       let payload = {
         roomName: this.room,
-        isPlaying: true,
-      };
-      this.socket.emit("change-isplaying", payload);
+        isPlaying: true
+      }
+      this.socket.emit('change-isplaying', payload)
     },
-    leaveRoom() {
-      this.$router.push("/lobby");
+    leaveRoom () {
+      this.$router.push('/lobby')
     },
-    videoEnded() {
-      this.ghost = false;
+    videoEnded () {
+      this.ghost = false
     },
-    generateSoal() {
-      this.firstNumber = random();
-      this.secondNumber = random();
-      this.result = this.solution(this.firstNumber, this.secondNumber);
+    generateSoal () {
+      this.firstNumber = random()
+      this.secondNumber = random()
+      this.result = this.solution(this.firstNumber, this.secondNumber)
     },
-    solution(x, y) {
-      return (x + y) % 10;
+    solution (x, y) {
+      return (x + y) % 10
     },
-    listenSocketEvent() {
-      this.socket.on("change-isplaying", (value) => {
-        this.isPlaying = value;
-      });
-      this.socket.on("end-game", () => {
-        this.isPlaying = false;
-        this.isGameEnded = true;
+    listenSocketEvent () {
+      this.socket.on('change-isplaying', (value) => {
+        this.isPlaying = value
+      })
+      this.socket.on('end-game', () => {
+        this.isPlaying = false
+        this.isGameEnded = true
         if (this.isWinning) {
-          this.$myswal.showWin();
+          this.$myswal.showWin()
         } else {
-          this.$myswal.showMessage("Sorry, you lost :(");
+          this.$myswal.showMessage('Sorry, you lost :(')
         }
-      });
-      this.socket.on("update-score", (payload) => {
-        this.$store.commit("updateOtherScore", payload);
-      });
-      this.socket.on("player-joined", (players) => {
-        this.$store.commit("setOtherPlayers", players);
-      });
-      this.socket.on("player-left", (players) => {
-        this.$store.commit("setOtherPlayers", players);
-      });
-      this.socket.on("show-error", (message) => {
-        this.$myswal.showError(message);
-      });
+      })
+      this.socket.on('update-score', (payload) => {
+        this.$store.commit('updateOtherScore', payload)
+      })
+      this.socket.on('player-joined', (players) => {
+        this.$store.commit('setOtherPlayers', players)
+      })
+      this.socket.on('player-left', (players) => {
+        this.$store.commit('setOtherPlayers', players)
+      })
+      this.socket.on('show-error', (message) => {
+        this.$myswal.showError(message)
+      })
     },
-    handleKey(e) {
+    handleKey (e) {
       if (e.keyCode >= 48 && e.keyCode < 58 && this.isPlaying) {
-        let answer = getUserAnswer(e.keyCode);
+        let answer = getUserAnswer(e.keyCode)
         if (answer === this.result) {
-          this.$store.commit("setMyScore", this.myScore + 1);
+          this.$store.commit('setMyScore', this.myScore + 1)
           let payload = {
             key: this.myKey,
             score: this.myScore,
-            roomName: this.room,
-          };
-          this.socket.emit("update-score", payload);
+            roomName: this.room
+          }
+          this.socket.emit('update-score', payload)
           if (this.myScore === 20) {
-            this.isWinning = true;
-            this.socket.emit("end-game", this.room);
+            this.isWinning = true
+            this.socket.emit('end-game', this.room)
           }
         } else {
-          this.ghost = true;
+          this.ghost = true
         }
-        this.generateSoal();
+        this.generateSoal()
       }
     },
-    showHowToPlay() {
-      this.$myswal.showHowToPlay();
-    },
+    showHowToPlay () {
+      this.$myswal.showHowToPlay()
+    }
   },
   computed: {
     ...mapState([
-      "isCreator",
-      "myName",
-      "myKey",
-      "myScore",
-      "room",
-      "socket",
-      "otherPlayers",
-    ]),
+      'isCreator',
+      'myName',
+      'myKey',
+      'myScore',
+      'room',
+      'socket',
+      'otherPlayers'
+    ])
   },
-  created() {
-    this.generateSoal();
-    window.addEventListener("keydown", this.handleKey);
-    this.listenSocketEvent();
-    this.showHowToPlay();
+  created () {
+    this.generateSoal()
+    window.addEventListener('keydown', this.handleKey)
+    this.listenSocketEvent()
+    this.showHowToPlay()
   },
-  destroyed() {
-    this.socket.off("change-isplaying");
-    this.socket.off("end-game");
-    this.socket.off("update-score");
-    this.socket.off("player-joined");
-    this.socket.off("show-error");
-    this.socket.off("player-left");
-    window.removeEventListener("keydown", this.handleKey);
-  },
-};
+  destroyed () {
+    this.socket.off('change-isplaying')
+    this.socket.off('end-game')
+    this.socket.off('update-score')
+    this.socket.off('player-joined')
+    this.socket.off('show-error')
+    this.socket.off('player-left')
+    window.removeEventListener('keydown', this.handleKey)
+  }
+}
 
-function getUserAnswer(buttonCode) {
+function getUserAnswer (buttonCode) {
   switch (buttonCode) {
     case 48:
-      return 0;
+      return 0
     case 49:
-      return 1;
+      return 1
     case 50:
-      return 2;
+      return 2
     case 51:
-      return 3;
+      return 3
     case 52:
-      return 4;
+      return 4
     case 53:
-      return 5;
+      return 5
     case 54:
-      return 6;
+      return 6
     case 55:
-      return 7;
+      return 7
     case 56:
-      return 8;
+      return 8
     case 57:
-      return 9;
+      return 9
     default:
-      return -1;
+      return -1
   }
 }
 </script>
